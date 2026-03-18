@@ -161,22 +161,6 @@ def insight_exists(story_id, suffix):
             return f"insights/{filename}"
     return None
 
-def git_commit_insight(insight_file, story_id, suffix):
-    try:
-        subprocess.run(["git", "add", insight_file], check=True)
-        
-        commit_msg = f"Add insight: {story_id}_{suffix}"
-        subprocess.run(["git", "commit", "-m", commit_msg], check=True)
-        
-        subprocess.run(["git", "pull", "--rebase"], check=True)
-        subprocess.run(["git", "push"], check=True)
-        
-        print(f"  Committed and pushed: {insight_file}")
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"  Error committing insight: {e}")
-        return False
-
 def generate_insight(story_id, url, suffix=""):
     os.makedirs("insights", exist_ok=True)
     
@@ -291,10 +275,6 @@ def main():
                         print(f"  Error: HN insight not generated for story {story_id}")
                         error_count += 1
                         continue
-                    
-                    if not git_commit_insight(hn_insight_file, story_id, "hn"):
-                        error_count += 1
-                        continue
                 
                 # 2. 检查并生成 article 洞察
                 if original_url:
@@ -307,10 +287,6 @@ def main():
                         
                         if not article_insight_file or not os.path.exists(article_insight_file):
                             print(f"  Error: article insight not generated for story {story_id}")
-                            error_count += 1
-                            continue
-                        
-                        if not git_commit_insight(article_insight_file, story_id, "article"):
                             error_count += 1
                             continue
                 

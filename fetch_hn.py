@@ -151,6 +151,16 @@ def story_exists(conn, story_id):
     cursor.execute('SELECT 1 FROM stories WHERE id = ?', (story_id,))
     return cursor.fetchone() is not None
 
+def insight_exists(story_id, suffix):
+    if not os.path.exists("insights"):
+        return None
+    
+    pattern = f"_{story_id}_{suffix}.md"
+    for filename in os.listdir("insights"):
+        if filename.endswith(pattern):
+            return f"insights/{filename}"
+    return None
+
 def git_commit_insight(insight_file, story_id, suffix):
     try:
         subprocess.run(["git", "add", insight_file], check=True)
@@ -269,34 +279,40 @@ def main():
                 
                 hn_url = f"https://news.ycombinator.com/item?id={story_id}"
                 
-                # 1. 生成 HN 链接洞察 (必须)
-                print(f"  Generating HN insight...")
-                hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
+                # 1. 检查并生成 HN 洞察
+                existing_hn = insight_exists(story_id, "hn")
+                if existing_hn:
+                    print(f"  HN insight already exists: {existing_hn}")
+                else:
+                    print(f"  Generating HN insight...")
+                    hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
+                    
+                    if not hn_insight_file or not os.path.exists(hn_insight_file):
+                        print(f"  Error: HN insight not generated for story {story_id}")
+                        error_count += 1
+                        continue
+                    
+                    if not git_commit_insight(hn_insight_file, story_id, "hn"):
+                        error_count += 1
+                        continue
                 
-                if not hn_insight_file or not os.path.exists(hn_insight_file):
-                    print(f"  Error: HN insight not generated for story {story_id}")
-                    error_count += 1
-                    continue
-                
-                # 立即提交 hn 洞察
-                if not git_commit_insight(hn_insight_file, story_id, "hn"):
-                    error_count += 1
-                    continue
-                
-                # 2. 如果有 original_url，生成原链接洞察
+                # 2. 检查并生成 article 洞察
                 if original_url:
-                    print(f"  Generating article insight...")
-                    article_insight_file = generate_insight(story_id, original_url, suffix="article")
-                    
-                    if not article_insight_file or not os.path.exists(article_insight_file):
-                        print(f"  Error: article insight not generated for story {story_id}")
-                        error_count += 1
-                        continue
-                    
-                    # 立即提交 article 洞察
-                    if not git_commit_insight(article_insight_file, story_id, "article"):
-                        error_count += 1
-                        continue
+                    existing_article = insight_exists(story_id, "article")
+                    if existing_article:
+                        print(f"  Article insight already exists: {existing_article}")
+                    else:
+                        print(f"  Generating article insight...")
+                        article_insight_file = generate_insight(story_id, original_url, suffix="article")
+                        
+                        if not article_insight_file or not os.path.exists(article_insight_file):
+                            print(f"  Error: article insight not generated for story {story_id}")
+                            error_count += 1
+                            continue
+                        
+                        if not git_commit_insight(article_insight_file, story_id, "article"):
+                            error_count += 1
+                            continue
                 
                 print(f"  Inserting story {story_id} into database...")
                 if insert_story(conn, story):

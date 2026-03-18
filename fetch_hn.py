@@ -111,10 +111,9 @@ def insight_exists(story_id, suffix):
             return filename
     return None
 
-def generate_insight(story_id, url, suffix=""):
+def generate_insight(story_id, url, date_prefix, suffix=""):
     os.makedirs("insights", exist_ok=True)
     
-    date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     if suffix:
         insight_file = f"{date_prefix}_{story_id}_{suffix}.md"
     else:
@@ -218,10 +217,13 @@ def main():
                 
                 print(f"\n  Processing story {story_id}: {title}")
                 
+                # 生成时间前缀（同一篇文章的 hn 和 article 使用相同时间）
+                date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
+                
                 # 1. 生成 HN 洞察
                 if need_hn:
                     print(f"  Generating HN insight...")
-                    hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
+                    hn_insight_file = generate_insight(story_id, hn_url, date_prefix, suffix="hn")
                     
                     if not hn_insight_file or not os.path.exists(f"insights/{hn_insight_file}"):
                         print(f"  Error: HN insight not generated for story {story_id}")
@@ -231,7 +233,7 @@ def main():
                 # 2. 生成 article 洞察
                 if need_article:
                     print(f"  Generating article insight...")
-                    article_insight_file = generate_insight(story_id, original_url, suffix="article")
+                    article_insight_file = generate_insight(story_id, original_url, date_prefix, suffix="article")
                     
                     if not article_insight_file or not os.path.exists(f"insights/{article_insight_file}"):
                         print(f"  Error: article insight not generated for story {story_id}")

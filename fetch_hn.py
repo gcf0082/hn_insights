@@ -205,17 +205,21 @@ def main():
                 
                 # 检查是否已存在洞察文件
                 existing_hn = insight_exists(story_id, "hn")
-                existing_article = insight_exists(story_id, "article") if original_url else True
+                existing_article = insight_exists(story_id, "article") if original_url else None
                 
-                if existing_hn and existing_article:
-                    print(f"\n  Story {story_id} already has insights, skipping")
+                # hn 必须存在，如果有 original_url 则 article 也必须存在
+                need_hn = not existing_hn
+                need_article = original_url and not existing_article
+                
+                if not need_hn and not need_article:
+                    print(f"\n  Story {story_id} already has all insights, skipping")
                     skipped_count += 1
                     continue
                 
                 print(f"\n  Processing story {story_id}: {title}")
                 
                 # 1. 生成 HN 洞察
-                if not existing_hn:
+                if need_hn:
                     print(f"  Generating HN insight...")
                     hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
                     
@@ -225,7 +229,7 @@ def main():
                         continue
                 
                 # 2. 生成 article 洞察
-                if original_url and not existing_article:
+                if need_article:
                     print(f"  Generating article insight...")
                     article_insight_file = generate_insight(story_id, original_url, suffix="article")
                     

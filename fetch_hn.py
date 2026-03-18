@@ -1,4 +1,3 @@
-import sqlite3
 import requests
 import time
 import re
@@ -13,7 +12,6 @@ except ImportError:
     os.system('pip install pyyaml -q')
     import yaml
 
-DB_PATH = "hacknews.db"
 HN_API_BASE = "https://hacker-news.firebaseio.com/v0"
 MAX_RETRIES = 3
 RETRY_DELAY = 2
@@ -80,27 +78,6 @@ def match_title_rules(title, config):
     
     return False
 
-def create_database():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS stories (
-            id INTEGER PRIMARY KEY,
-            hn_url TEXT UNIQUE NOT NULL,
-            original_url TEXT,
-            by TEXT,
-            title TEXT,
-            score INTEGER,
-            time INTEGER,
-            descendants INTEGER,
-            type TEXT,
-            fetched_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
-    cursor.execute('CREATE INDEX IF NOT EXISTS idx_hn_url ON stories(hn_url)')
-    conn.commit()
-    return conn
-
 def fetch_with_retry(url, max_retries=MAX_RETRIES):
     for attempt in range(max_retries):
         try:
@@ -123,33 +100,6 @@ def fetch_story_ids():
 def fetch_story_detail(story_id):
     url = f"{HN_API_BASE}/item/{story_id}.json"
     return fetch_with_retry(url)
-
-def insert_story(conn, story):
-    cursor = conn.cursor()
-    story_id = story.get('id')
-    hn_url = f"https://news.ycombinator.com/item?id={story_id}"
-    original_url = story.get('url')
-    by = story.get('by')
-    title = story.get('title')
-    score = story.get('score')
-    time_stamp = story.get('time')
-    descendants = story.get('descendants')
-    story_type = story.get('type')
-    
-    try:
-        cursor.execute('''
-            INSERT INTO stories (id, hn_url, original_url, by, title, score, time, descendants, type)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (story_id, hn_url, original_url, by, title, score, time_stamp, descendants, story_type))
-        conn.commit()
-        return True
-    except sqlite3.IntegrityError:
-        return False
-
-def story_exists(conn, story_id):
-    cursor = conn.cursor()
-    cursor.execute('SELECT 1 FROM stories WHERE id = ?', (story_id,))
-    return cursor.fetchone() is not None
 
 def insight_exists(story_id, suffix):
     if not os.path.exists("insights"):
@@ -216,16 +166,13 @@ def main():
     else:
         print("No config file found, fetching all stories")
     
-    print("\nConnecting to database...")
-    conn = create_database()
-    
-    print("Fetching top story IDs...")
+    print("\nFetching top story IDs...")
     story_ids = fetch_story_ids()
     story_ids = story_ids[:100]
     print(f"Found {len(story_ids)} stories\n")
     
-    new_count = 0
-    existing_count = 0
+    processed_count = 0
+    skipped_count = 0
     filtered_score_count = 0
     filtered_descendants_count = 0
     filtered_title_count = 0
@@ -254,20 +201,21 @@ def main():
                     filtered_title_count += 1
                     continue
                 
-                if story_exists(conn, story_id):
-                    print(f"\n  Story {story_id} already exists in database")
-                    existing_count += 1
-                    continue
-                
-                print(f"\n  Processing new story {story_id}: {title}")
-                
                 hn_url = f"https://news.ycombinator.com/item?id={story_id}"
                 
-                # 1. 检查并生成 HN 洞察
+                # 检查是否已存在洞察文件
                 existing_hn = insight_exists(story_id, "hn")
-                if existing_hn:
-                    print(f"  HN insight already exists: {existing_hn}")
-                else:
+                existing_article = insight_exists(story_id, "article") if original_url else True
+                
+                if existing_hn and existing_article:
+                    print(f"\n  Story {story_id} already has insights, skipping")
+                    skipped_count += 1
+                    continue
+                
+                print(f"\n  Processing story {story_id}: {title}")
+                
+                # 1. 生成 HN 洞察
+                if not existing_hn:
                     print(f"  Generating HN insight...")
                     hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
                     
@@ -276,38 +224,29 @@ def main():
                         error_count += 1
                         continue
                 
-                # 2. 检查并生成 article 洞察
-                if original_url:
-                    existing_article = insight_exists(story_id, "article")
-                    if existing_article:
-                        print(f"  Article insight already exists: {existing_article}")
-                    else:
-                        print(f"  Generating article insight...")
-                        article_insight_file = generate_insight(story_id, original_url, suffix="article")
-                        
-                        if not article_insight_file or not os.path.exists(article_insight_file):
-                            print(f"  Error: article insight not generated for story {story_id}")
-                            error_count += 1
-                            continue
+                # 2. 生成 article 洞察
+                if original_url and not existing_article:
+                    print(f"  Generating article insight...")
+                    article_insight_file = generate_insight(story_id, original_url, suffix="article")
+                    
+                    if not article_insight_file or not os.path.exists(article_insight_file):
+                        print(f"  Error: article insight not generated for story {story_id}")
+                        error_count += 1
+                        continue
                 
-                print(f"  Inserting story {story_id} into database...")
-                if insert_story(conn, story):
-                    new_count += 1
-                    print(f"  Story {story_id} inserted successfully")
+                processed_count += 1
         except Exception as e:
             error_count += 1
             print(f"\n  Error fetching story {story_id}: {type(e).__name__}")
             continue
     
     print(f"\n\nDone!")
-    print(f"  New stories: {new_count}")
-    print(f"  Already existed: {existing_count}")
+    print(f"  Processed: {processed_count}")
+    print(f"  Skipped (already exists): {skipped_count}")
     print(f"  Filtered (low score): {filtered_score_count}")
     print(f"  Filtered (low comments): {filtered_descendants_count}")
     print(f"  Filtered (title not matched): {filtered_title_count}")
     print(f"  Errors: {error_count}")
-    
-    conn.close()
 
 if __name__ == "__main__":
     main()

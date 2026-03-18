@@ -151,19 +151,22 @@ def story_exists(conn, story_id):
     cursor.execute('SELECT 1 FROM stories WHERE id = ?', (story_id,))
     return cursor.fetchone() is not None
 
-def generate_insight(story_id, original_url):
+def generate_insight(story_id, url, suffix=""):
     os.makedirs("insights", exist_ok=True)
     
     date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
-    insight_file = f"insights/{date_prefix}_{story_id}.md"
+    if suffix:
+        insight_file = f"insights/{date_prefix}_{story_id}_{suffix}.md"
+    else:
+        insight_file = f"insights/{date_prefix}_{story_id}.md"
     
     print(f"\n  Generating insight for story {story_id}...")
-    print(f"  URL: {original_url}")
+    print(f"  URL: {url}")
     print(f"  Output: {insight_file}")
     
     cmd = [
         "opencode", "run",
-        f"帮我总结洞察{original_url}，洞察结果保存在当前目录的insights目录的{date_prefix}_{story_id}.md",
+        f"帮我总结洞察{url}，洞察结果保存在当前目录的insights目录的{insight_file}",
         "--model", "opencode/minimax-m2.5-free"
     ]
     
@@ -249,19 +252,25 @@ def main():
                 print(f"\n  Processing new story {story_id}: {title}")
                 
                 hn_url = f"https://news.ycombinator.com/item?id={story_id}"
-                insight_url = original_url if original_url else hn_url
                 
-                print(f"  Generating insight for: {insight_url}")
-                insight_file = generate_insight(story_id, insight_url)
+                # 1. 生成 HN 链接洞察 (必须)
+                print(f"  Generating HN insight...")
+                hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
                 
-                print(f"  Insight file returned: {insight_file}")
-                if insight_file:
-                    print(f"  File exists check: {os.path.exists(insight_file)}")
-                
-                if not insight_file or not os.path.exists(insight_file):
-                    print(f"  Error: insight not generated for story {story_id}")
+                if not hn_insight_file or not os.path.exists(hn_insight_file):
+                    print(f"  Error: HN insight not generated for story {story_id}")
                     error_count += 1
                     continue
+                
+                # 2. 如果有 original_url，生成原链接洞察
+                if original_url:
+                    print(f"  Generating article insight...")
+                    article_insight_file = generate_insight(story_id, original_url, suffix="article")
+                    
+                    if not article_insight_file or not os.path.exists(article_insight_file):
+                        print(f"  Error: article insight not generated for story {story_id}")
+                        error_count += 1
+                        continue
                 
                 print(f"  Inserting story {story_id} into database...")
                 if insert_story(conn, story):

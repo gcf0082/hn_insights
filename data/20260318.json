@@ -5,11 +5,11 @@
     "original_url": "https://mistral.ai/news/forge",
     "by": "pember",
     "title": "Mistral AI Releases Forge",
-    "score": 654,
+    "score": 655,
     "time": 1773781466,
-    "descendants": 162,
+    "descendants": 163,
     "type": "story",
-    "fetched_at": "2026-03-18 16:35:20"
+    "fetched_at": "2026-03-18 16:46:35"
   },
   {
     "id": 47400868,
@@ -21,7 +21,7 @@
     "time": 1773677249,
     "descendants": 196,
     "type": "story",
-    "fetched_at": "2026-03-18 16:37:13"
+    "fetched_at": "2026-03-18 16:49:54"
   },
   {
     "id": 47415441,
@@ -29,11 +29,11 @@
     "original_url": "https://openai.com/index/introducing-gpt-5-4-mini-and-nano",
     "by": "meetpateltech",
     "title": "GPT‑5.4 Mini and Nano",
-    "score": 234,
+    "score": 235,
     "time": 1773767226,
     "descendants": 143,
     "type": "story",
-    "fetched_at": "2026-03-18 16:37:49"
+    "fetched_at": "2026-03-18 16:50:34"
   },
   {
     "id": 47418722,
@@ -45,7 +45,7 @@
     "time": 1773783759,
     "descendants": 102,
     "type": "story",
-    "fetched_at": "2026-03-18 16:35:56"
+    "fetched_at": "2026-03-18 16:48:07"
   },
   {
     "id": 47420493,
@@ -57,6 +57,18 @@
     "time": 1773796219,
     "descendants": 20,
     "type": "story",
-    "fetched_at": "2026-03-18 16:36:25"
+    "fetched_at": "2026-03-18 16:48:34"
+  },
+  {
+    "id": 47425918,
+    "hn_url": "https://news.ycombinator.com/item?id=47425918",
+    "original_url": "https://github.com/joaoh82/rustunnel",
+    "by": "joaoh82",
+    "title": "A ngrok-style secure tunnel server written in Rust and Open Source",
+    "score": 32,
+    "time": 1773842443,
+    "descendants": 10,
+    "type": "story",
+    "fetched_at": "2026-03-18 16:47:44"
   }
 ]

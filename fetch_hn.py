@@ -164,7 +164,7 @@ def generate_insight(story_id, original_url):
     cmd = [
         "opencode", "run",
         f"帮我总结洞察{original_url}，洞察结果保存在当前目录的insights目录的{date_prefix}_{story_id}.md",
-        "--model", "opencode/minimax-m2.5-freem"
+        "--model", "opencode/minimax-m2.5-free"
     ]
     
     print(f"  Running: {' '.join(cmd)}")

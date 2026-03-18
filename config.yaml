@@ -1,10 +1,11 @@
-min_score: 10
+min_score: 30
+min_descendants: 10
 
 title_rules:
   - match_type: "word"
     ignore_case: true
-    keywords: ["AI", "LLM",  "gpt", "MCP"]
+    keywords: ["AI", "LLM", "gpt", "MCP"]
   
   - match_type: "contains"
     ignore_case: true
-    keywords: ["deepseek","kimi","qwen","minmax","grok", "antropic", "gemini","glm","openai","chatgpt","claude","openclaw","opencode","agentic", "ai agent"]
+    keywords: ["deepseek", "kimi", "qwen", "minmax", "grok", "antropic", "gemini", "glm", "openai", "chatgpt", "claude", "openclaw", "opencode", "agentic", "ai agent"]

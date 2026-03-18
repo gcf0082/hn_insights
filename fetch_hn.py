@@ -34,6 +34,16 @@ def check_min_score(score, config):
     
     return score >= min_score
 
+def check_min_descendants(descendants, config):
+    if not config:
+        return True
+    
+    min_descendants = config.get('min_descendants', 0)
+    if descendants is None:
+        return True
+    
+    return descendants >= min_descendants
+
 def match_title_rules(title, config):
     if not config:
         return True
@@ -105,7 +115,7 @@ def fetch_with_retry(url, max_retries=MAX_RETRIES):
                 raise
 
 def fetch_story_ids():
-    url = f"{HN_API_BASE}/newstories.json"
+    url = f"{HN_API_BASE}/topstories.json"
     return fetch_with_retry(url)
 
 def fetch_story_detail(story_id):
@@ -140,7 +150,9 @@ def main():
     
     if config:
         min_score = config.get('min_score', 0)
+        min_descendants = config.get('min_descendants', 0)
         print(f"Min score: {min_score}")
+        print(f"Min descendants: {min_descendants}")
         
         title_rules = config.get('title_rules', [])
         print(f"Title rules: {len(title_rules)} rules")
@@ -154,14 +166,15 @@ def main():
     print("\nConnecting to database...")
     conn = create_database()
     
-    print("Fetching latest story IDs...")
+    print("Fetching top story IDs...")
     story_ids = fetch_story_ids()
-    story_ids = story_ids[:20]
+    story_ids = story_ids[:100]
     print(f"Found {len(story_ids)} stories\n")
     
     new_count = 0
     existing_count = 0
     filtered_score_count = 0
+    filtered_descendants_count = 0
     filtered_title_count = 0
     error_count = 0
     
@@ -173,9 +186,14 @@ def main():
             if story:
                 title = story.get('title', '')
                 score = story.get('score')
+                descendants = story.get('descendants')
                 
                 if not check_min_score(score, config):
                     filtered_score_count += 1
+                    continue
+                
+                if not check_min_descendants(descendants, config):
+                    filtered_descendants_count += 1
                     continue
                 
                 if not match_title_rules(title, config):
@@ -195,6 +213,7 @@ def main():
     print(f"  New stories: {new_count}")
     print(f"  Already existed: {existing_count}")
     print(f"  Filtered (low score): {filtered_score_count}")
+    print(f"  Filtered (low comments): {filtered_descendants_count}")
     print(f"  Filtered (title not matched): {filtered_title_count}")
     print(f"  Errors: {error_count}")
     

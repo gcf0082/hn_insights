@@ -1,74 +1,14 @@
 [
   {
-    "id": 47418295,
-    "hn_url": "https://news.ycombinator.com/item?id=47418295",
-    "original_url": "https://mistral.ai/news/forge",
-    "by": "pember",
-    "title": "Mistral AI Releases Forge",
-    "score": 655,
-    "time": 1773781466,
-    "descendants": 163,
-    "type": "story",
-    "fetched_at": "2026-03-18 16:46:35"
-  },
-  {
-    "id": 47400868,
-    "hn_url": "https://news.ycombinator.com/item?id=47400868",
-    "original_url": "https://github.com/htdt/godogen",
-    "by": "htdt",
-    "title": "Show HN: Claude Code skills that build complete Godot games",
-    "score": 316,
-    "time": 1773677249,
-    "descendants": 196,
-    "type": "story",
-    "fetched_at": "2026-03-18 16:49:54"
-  },
-  {
     "id": 47415441,
     "hn_url": "https://news.ycombinator.com/item?id=47415441",
     "original_url": "https://openai.com/index/introducing-gpt-5-4-mini-and-nano",
     "by": "meetpateltech",
     "title": "GPT‑5.4 Mini and Nano",
-    "score": 235,
+    "score": 236,
     "time": 1773767226,
     "descendants": 143,
     "type": "story",
-    "fetched_at": "2026-03-18 16:50:34"
-  },
-  {
-    "id": 47418722,
-    "hn_url": "https://news.ycombinator.com/item?id=47418722",
-    "original_url": "https://arxiv.org/abs/2603.15381",
-    "by": "aanet",
-    "title": "Why AI systems don't learn – On autonomous learning from cognitive science",
-    "score": 161,
-    "time": 1773783759,
-    "descendants": 102,
-    "type": "story",
-    "fetched_at": "2026-03-18 16:48:07"
-  },
-  {
-    "id": 47420493,
-    "hn_url": "https://news.ycombinator.com/item?id=47420493",
-    "original_url": "https://amaiya.github.io/onprem/examples_agent.html",
-    "by": "wiseprobe",
-    "title": "Launch an autonomous AI agent with sandboxed execution in 2 lines of code",
-    "score": 49,
-    "time": 1773796219,
-    "descendants": 20,
-    "type": "story",
-    "fetched_at": "2026-03-18 16:48:34"
-  },
-  {
-    "id": 47425918,
-    "hn_url": "https://news.ycombinator.com/item?id=47425918",
-    "original_url": "https://github.com/joaoh82/rustunnel",
-    "by": "joaoh82",
-    "title": "A ngrok-style secure tunnel server written in Rust and Open Source",
-    "score": 32,
-    "time": 1773842443,
-    "descendants": 10,
-    "type": "story",
-    "fetched_at": "2026-03-18 16:47:44"
+    "fetched_at": "2026-03-18 16:58:48"
   }
 ]

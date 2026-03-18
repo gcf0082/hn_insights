@@ -40,11 +40,11 @@ jobs:
       - name: Export today's stories
         run: python export_today.py
       
-      - name: Commit and push changes
+      - name: Commit and push database
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update: $(date '+%Y-%m-%d %H:%M')"
+          git add hacknews.db
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update database: $(date '+%Y-%m-%d %H:%M')"
           git pull --rebase
           git push

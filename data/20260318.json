@@ -1,0 +1,74 @@
+[
+  {
+    "id": 47426188,
+    "hn_url": "https://news.ycombinator.com/item?id=47426188",
+    "original_url": "https://www.axios.com/2026/03/18/ai-enterprise-revenue-anthropic-openai",
+    "by": "Brajeshwar",
+    "title": "Anthropic turns the tables on OpenAI in critical revenue category",
+    "score": 1,
+    "time": 1773843893,
+    "descendants": 0,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:33:49"
+  },
+  {
+    "id": 47426207,
+    "hn_url": "https://news.ycombinator.com/item?id=47426207",
+    "original_url": "https://amux.io/blog/auto-restart-ai-agents/",
+    "by": "Beefin",
+    "title": "Detecting When Your AI Agent Dies",
+    "score": 1,
+    "time": 1773843972,
+    "descendants": 0,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:33:38"
+  },
+  {
+    "id": 47426208,
+    "hn_url": "https://news.ycombinator.com/item?id=47426208",
+    "original_url": "https://ranvier.systems/2026/03/16/why-your-load-balancer-is-wasting-your-gpus.html",
+    "by": "mindsaspire",
+    "title": "Show HN: Ranvier – Prefix-aware routing for LLM inference",
+    "score": 1,
+    "time": 1773843987,
+    "descendants": 0,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:33:34"
+  },
+  {
+    "id": 47426215,
+    "hn_url": "https://news.ycombinator.com/item?id=47426215",
+    "original_url": "https://apcher.dev:443/",
+    "by": "Samueedwards1",
+    "title": "AI executions create billion-dollar valuations–just not yours",
+    "score": 1,
+    "time": 1773844008,
+    "descendants": 1,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:33:31"
+  },
+  {
+    "id": 47426251,
+    "hn_url": "https://news.ycombinator.com/item?id=47426251",
+    "original_url": "https://thepolarisreport.com/brief/PR-xvZ14brd",
+    "by": "JohnWeston",
+    "title": "Anthropic Captures 73% of New Enterprise AI Spending, Outpacing OpenAI",
+    "score": 1,
+    "time": 1773844142,
+    "descendants": 0,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:33:22"
+  },
+  {
+    "id": 47426283,
+    "hn_url": "https://news.ycombinator.com/item?id=47426283",
+    "original_url": "https://www.bookandsword.com/2026/03/14/how-generative-ai-pollutes-search-results/",
+    "by": "speckx",
+    "title": "Generative 'AI' Pollutes Search Results",
+    "score": 1,
+    "time": 1773844287,
+    "descendants": 0,
+    "type": "story",
+    "fetched_at": "2026-03-18 14:32:54"
+  }
+]

@@ -108,7 +108,7 @@ def insight_exists(story_id, suffix):
     pattern = f"_{story_id}_{suffix}.md"
     for filename in os.listdir("insights"):
         if filename.endswith(pattern):
-            return f"insights/{filename}"
+            return filename
     return None
 
 def generate_insight(story_id, url, suffix=""):
@@ -116,13 +116,13 @@ def generate_insight(story_id, url, suffix=""):
     
     date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     if suffix:
-        insight_file = f"insights/{date_prefix}_{story_id}_{suffix}.md"
+        insight_file = f"{date_prefix}_{story_id}_{suffix}.md"
     else:
-        insight_file = f"insights/{date_prefix}_{story_id}.md"
+        insight_file = f"{date_prefix}_{story_id}.md"
     
     print(f"\n  Generating insight for story {story_id}...")
     print(f"  URL: {url}")
-    print(f"  Output: {insight_file}")
+    print(f"  Output: insights/{insight_file}")
     
     cmd = [
         "opencode", "run",
@@ -223,7 +223,7 @@ def main():
                     print(f"  Generating HN insight...")
                     hn_insight_file = generate_insight(story_id, hn_url, suffix="hn")
                     
-                    if not hn_insight_file or not os.path.exists(hn_insight_file):
+                    if not hn_insight_file or not os.path.exists(f"insights/{hn_insight_file}"):
                         print(f"  Error: HN insight not generated for story {story_id}")
                         error_count += 1
                         continue
@@ -233,7 +233,7 @@ def main():
                     print(f"  Generating article insight...")
                     article_insight_file = generate_insight(story_id, original_url, suffix="article")
                     
-                    if not article_insight_file or not os.path.exists(article_insight_file):
+                    if not article_insight_file or not os.path.exists(f"insights/{article_insight_file}"):
                         print(f"  Error: article insight not generated for story {story_id}")
                         error_count += 1
                         continue

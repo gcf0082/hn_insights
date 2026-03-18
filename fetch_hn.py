@@ -247,20 +247,21 @@ def main():
                     continue
                 
                 print(f"\n  Processing new story {story_id}: {title}")
-                if original_url:
-                    print(f"  Has original_url, generating insight...")
-                    insight_file = generate_insight(story_id, original_url)
-                    
-                    print(f"  Insight file returned: {insight_file}")
-                    if insight_file:
-                        print(f"  File exists check: {os.path.exists(insight_file)}")
-                    
-                    if not insight_file or not os.path.exists(insight_file):
-                        print(f"  Error: insight not generated for story {story_id}")
-                        error_count += 1
-                        continue
-                else:
-                    print(f"  No original_url, skipping insight generation")
+                
+                hn_url = f"https://news.ycombinator.com/item?id={story_id}"
+                insight_url = original_url if original_url else hn_url
+                
+                print(f"  Generating insight for: {insight_url}")
+                insight_file = generate_insight(story_id, insight_url)
+                
+                print(f"  Insight file returned: {insight_file}")
+                if insight_file:
+                    print(f"  File exists check: {os.path.exists(insight_file)}")
+                
+                if not insight_file or not os.path.exists(insight_file):
+                    print(f"  Error: insight not generated for story {story_id}")
+                    error_count += 1
+                    continue
                 
                 print(f"  Inserting story {story_id} into database...")
                 if insert_story(conn, story):

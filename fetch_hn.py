@@ -3,6 +3,8 @@ import requests
 import time
 import re
 import os
+import subprocess
+from datetime import datetime
 
 try:
     import yaml
@@ -144,6 +146,34 @@ def insert_story(conn, story):
     except sqlite3.IntegrityError:
         return False
 
+def story_exists(conn, story_id):
+    cursor = conn.cursor()
+    cursor.execute('SELECT 1 FROM stories WHERE id = ?', (story_id,))
+    return cursor.fetchone() is not None
+
+def generate_insight(story_id, original_url):
+    os.makedirs("insights", exist_ok=True)
+    
+    date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
+    insight_file = f"insights/{date_prefix}_{story_id}.md"
+    
+    cmd = [
+        "opencode", "run",
+        f"帮我总结洞察{original_url}，洞察结果保存在当前目录的insights目录的{date_prefix}_{story_id}.md",
+        "--model", "opencode/minimax-m2.5-freem"
+    ]
+    
+    try:
+        result = subprocess.run(cmd, timeout=300)
+        if result.returncode != 0:
+            print(f"\n  Error: opencode command failed with code {result.returncode}")
+            return None
+    except subprocess.TimeoutExpired:
+        print(f"\n  Error: opencode command timeout after 5 minutes")
+        return None
+    
+    return insight_file
+
 def main():
     print("Loading config...")
     config = load_config()
@@ -187,6 +217,7 @@ def main():
                 title = story.get('title', '')
                 score = story.get('score')
                 descendants = story.get('descendants')
+                original_url = story.get('url')
                 
                 if not check_min_score(score, config):
                     filtered_score_count += 1
@@ -200,10 +231,20 @@ def main():
                     filtered_title_count += 1
                     continue
                 
+                if story_exists(conn, story_id):
+                    existing_count += 1
+                    continue
+                
+                if original_url:
+                    insight_file = generate_insight(story_id, original_url)
+                    
+                    if not insight_file or not os.path.exists(insight_file):
+                        print(f"\n  Error: insight not generated for story {story_id}")
+                        error_count += 1
+                        continue
+                
                 if insert_story(conn, story):
                     new_count += 1
-                else:
-                    existing_count += 1
         except Exception as e:
             error_count += 1
             print(f"\n  Error fetching story {story_id}: {type(e).__name__}")

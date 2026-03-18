@@ -157,19 +157,29 @@ def generate_insight(story_id, original_url):
     date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     insight_file = f"insights/{date_prefix}_{story_id}.md"
     
+    print(f"\n  Generating insight for story {story_id}...")
+    print(f"  URL: {original_url}")
+    print(f"  Output: {insight_file}")
+    
     cmd = [
         "opencode", "run",
         f"帮我总结洞察{original_url}，洞察结果保存在当前目录的insights目录的{date_prefix}_{story_id}.md",
         "--model", "opencode/minimax-m2.5-freem"
     ]
     
+    print(f"  Running: {' '.join(cmd)}")
+    
     try:
         result = subprocess.run(cmd, timeout=300)
+        print(f"  Command finished with return code: {result.returncode}")
         if result.returncode != 0:
-            print(f"\n  Error: opencode command failed with code {result.returncode}")
+            print(f"  Error: opencode command failed with code {result.returncode}")
             return None
     except subprocess.TimeoutExpired:
-        print(f"\n  Error: opencode command timeout after 5 minutes")
+        print(f"  Error: opencode command timeout after 5 minutes")
+        return None
+    except Exception as e:
+        print(f"  Error: {type(e).__name__}: {e}")
         return None
     
     return insight_file
@@ -232,19 +242,30 @@ def main():
                     continue
                 
                 if story_exists(conn, story_id):
+                    print(f"\n  Story {story_id} already exists in database")
                     existing_count += 1
                     continue
                 
+                print(f"\n  Processing new story {story_id}: {title}")
                 if original_url:
+                    print(f"  Has original_url, generating insight...")
                     insight_file = generate_insight(story_id, original_url)
                     
+                    print(f"  Insight file returned: {insight_file}")
+                    if insight_file:
+                        print(f"  File exists check: {os.path.exists(insight_file)}")
+                    
                     if not insight_file or not os.path.exists(insight_file):
-                        print(f"\n  Error: insight not generated for story {story_id}")
+                        print(f"  Error: insight not generated for story {story_id}")
                         error_count += 1
                         continue
+                else:
+                    print(f"  No original_url, skipping insight generation")
                 
+                print(f"  Inserting story {story_id} into database...")
                 if insert_story(conn, story):
                     new_count += 1
+                    print(f"  Story {story_id} inserted successfully")
         except Exception as e:
             error_count += 1
             print(f"\n  Error fetching story {story_id}: {type(e).__name__}")

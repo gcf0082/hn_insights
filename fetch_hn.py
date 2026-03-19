@@ -167,7 +167,7 @@ def main():
     
     print("\nFetching top story IDs...")
     story_ids = fetch_story_ids()
-    story_ids = story_ids[:100]
+    #story_ids = story_ids[:100]
     print(f"Found {len(story_ids)} stories\n")
     
     processed_count = 0

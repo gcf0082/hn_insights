@@ -176,7 +176,7 @@ def main():
     filtered_descendants_count = 0
     filtered_title_count = 0
     error_count = 0
-    
+    date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
     for i, story_id in enumerate(story_ids, 1):
         print(f"Fetching story {i}/{len(story_ids)} (ID: {story_id})...", end='\r')
         try:
@@ -216,10 +216,7 @@ def main():
                     continue
                 
                 print(f"\n  Processing story {story_id}: {title}")
-                
-                # 生成时间前缀（同一篇文章的 hn 和 article 使用相同时间）
-                date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
-                
+                                
                 # 1. 生成 HN 洞察
                 if need_hn:
                     print(f"  Generating HN insight...")

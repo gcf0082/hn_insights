@@ -117,7 +117,7 @@ def insight_exists(story_id, suffix):
     if not os.path.exists("insights"):
         return None
 
-    pattern = f"_{story_id}_{suffix}_"
+    pattern = f"_{story_id}_{suffix}"
     for filename in os.listdir("insights"):
         if pattern in filename and filename.endswith(".md"):
             return filename

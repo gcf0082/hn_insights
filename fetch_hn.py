@@ -117,14 +117,14 @@ def insight_exists(story_id, suffix):
     if not os.path.exists("insights"):
         return None
 
-    pattern = f"_{story_id}_{suffix}"
+    pattern = f"_{story_id}_{suffix}_"
     for filename in os.listdir("insights"):
         if pattern in filename and filename.endswith(".md"):
             return filename
     return None
 
 
-def generate_insight(story_id, url, date_prefix, suffix="", title=""):
+def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
     os.makedirs("insights", exist_ok=True)
 
     if suffix:
@@ -159,24 +159,22 @@ def generate_insight(story_id, url, date_prefix, suffix="", title=""):
         print(f"  Error: {type(e).__name__}: {e}")
         return None
 
-    if title:
-        chinese_title = convert_title_to_chinese(title)
-        if chinese_title:
-            chinese_title = sanitize_filename(chinese_title)
-            base_name = (
-                f"{date_prefix}_{story_id}_{suffix}"
-                if suffix
-                else f"{date_prefix}_{story_id}"
-            )
-            new_insight_file = f"{base_name}_{chinese_title}.md"
-            old_path = f"insights/{insight_file}"
-            new_path = f"insights/{new_insight_file}"
-            try:
-                os.rename(old_path, new_path)
-                print(f"  Renamed to: {new_insight_file}")
-                insight_file = new_insight_file
-            except Exception as e:
-                print(f"  Warning: Failed to rename file: {type(e).__name__}: {e}")
+    if chinese_title:
+        chinese_title = sanitize_filename(chinese_title)
+        base_name = (
+            f"{date_prefix}_{story_id}_{suffix}"
+            if suffix
+            else f"{date_prefix}_{story_id}"
+        )
+        new_insight_file = f"{base_name}_{chinese_title}.md"
+        old_path = f"insights/{insight_file}"
+        new_path = f"insights/{new_insight_file}"
+        try:
+            os.rename(old_path, new_path)
+            print(f"  Renamed to: {new_insight_file}")
+            insight_file = new_insight_file
+        except Exception as e:
+            print(f"  Warning: Failed to rename file: {type(e).__name__}: {e}")
 
     return insight_file
 
@@ -186,7 +184,7 @@ def convert_title_to_chinese(title):
     cmd = [
         "opencode",
         "run",
-        f'帮我把如下标题转换成中文标题，标题："{title}"',
+        f'帮我把如下标题转换成中文标题(只输出结果不解释)，待翻译标题："{title}"',
         "--model",
         "opencode/minimax-m2.5-free",
     ]
@@ -295,11 +293,18 @@ def main():
 
                 print(f"\n  Processing story {story_id}: {title}")
 
+                # 在生成洞察前转换标题
+                chinese_title = convert_title_to_chinese(title)
+
                 # 1. 生成 HN 洞察
                 if need_hn:
                     print(f"  Generating HN insight...")
                     hn_insight_file = generate_insight(
-                        story_id, hn_url, date_prefix, suffix="hn", title=title
+                        story_id,
+                        hn_url,
+                        date_prefix,
+                        suffix="hn",
+                        chinese_title=chinese_title,
                     )
 
                     if not hn_insight_file or not os.path.exists(
@@ -317,7 +322,7 @@ def main():
                         original_url,
                         date_prefix,
                         suffix="article",
-                        title=title,
+                        chinese_title=chinese_title,
                     )
 
                     if not article_insight_file or not os.path.exists(

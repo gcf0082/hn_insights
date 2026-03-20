@@ -1,5 +1,5 @@
 min_score: 50
-min_descendants: 10
+min_descendants: 20
 
 title_rules:
   - match_type: "word"

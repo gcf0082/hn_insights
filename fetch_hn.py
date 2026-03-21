@@ -139,7 +139,7 @@ def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
     cmd = [
         "opencode",
         "run",
-        f"帮我总结洞察{url}，洞察结果保存在当前目录的 insights 目录的{insight_file}",
+        f"帮我总结洞察{url}，要求报告顶部包洞察链接和基本信息，洞察结果保存在当前目录的 insights 目录的{insight_file}",
         "--model",
         "opencode/minimax-m2.5-free",
     ]

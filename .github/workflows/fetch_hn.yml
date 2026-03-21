@@ -11,6 +11,8 @@ permissions:
 jobs:
   fetch-and-export:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
     
     steps:
       - name: Checkout repository

@@ -3,7 +3,7 @@ import time
 import re
 import os
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 try:
     import yaml
@@ -16,6 +16,7 @@ HN_API_BASE = "https://hacker-news.firebaseio.com/v0"
 MAX_RETRIES = 3
 RETRY_DELAY = 2
 CONFIG_PATH = "config.yaml"
+BEIJING_TZ = timezone(timedelta(hours=8))
 
 
 def load_config():
@@ -250,7 +251,7 @@ def main():
     filtered_descendants_count = 0
     filtered_title_count = 0
     error_count = 0
-    date_prefix = datetime.now().strftime("%Y%m%d_%H%M%S")
+    date_prefix = datetime.now(BEIJING_TZ).strftime("%Y%m%d_%H%M%S")
     for i, story_id in enumerate(story_ids, 1):
         print(f"Fetching story {i}/{len(story_ids)} (ID: {story_id})...", end="\r")
         try:

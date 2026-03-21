@@ -4,7 +4,7 @@ min_descendants: 20
 title_rules:
   - match_type: "word"
     ignore_case: true
-    keywords: ["AI", "LLM", "MCP", "AGI", "RAG", "CoT", "AIGC", "TRAE", "cursor"]
+    keywords: ["AI", "LLM", "MCP", "AGI", "RAG", "CoT", "AIGC", "TRAE", "cursor", "skill", "skills"]
   
   - match_type: "contains"
     ignore_case: true

@@ -8,6 +8,7 @@ const RAW_BASE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAM
 
 let allPosts = [];
 let currentFilter = 'all';
+let visitedPosts = JSON.parse(localStorage.getItem('visitedPosts') || '[]');
 
 async function fetchPosts() {
     try {
@@ -74,7 +75,7 @@ function renderList() {
     }
     
     container.innerHTML = filteredPosts.map(post => `
-        <div class="post-item type-${post.type}" data-filename="${post.filename}">
+        <div class="post-item type-${post.type} ${visitedPosts.includes(post.filename) ? 'visited' : ''}" data-filename="${post.filename}">
             <div class="post-header">
                 <span class="post-date">${post.date}</span>
                 <span class="post-type ${post.type}">${post.type.toUpperCase()}</span>
@@ -95,6 +96,11 @@ function escapeHtml(text) {
 }
 
 async function showDetail(filename) {
+    if (!visitedPosts.includes(filename)) {
+        visitedPosts.push(filename);
+        localStorage.setItem('visitedPosts', JSON.stringify(visitedPosts));
+    }
+    
     const listView = document.getElementById('list-view');
     const detailView = document.getElementById('detail-view');
     const content = document.getElementById('post-content');

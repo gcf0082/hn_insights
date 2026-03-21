@@ -92,16 +92,23 @@ header .subtitle {
 
 .post-item {
     background-color: var(--bg-secondary);
-    border-radius: 8px;
-    padding: 16px 20px;
+    border-radius: 6px;
+    padding: 10px 16px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-left: 4px solid transparent;
+    border-left: 3px solid transparent;
 }
 
 .post-item:hover {
     background-color: var(--hover-bg);
-    transform: translateX(4px);
+}
+
+.post-item.visited {
+    opacity: 0.6;
+}
+
+.post-item.visited .post-title {
+    color: var(--text-secondary);
 }
 
 .post-item.type-hn {
@@ -115,20 +122,20 @@ header .subtitle {
 .post-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 10px;
+    margin-bottom: 4px;
     flex-wrap: wrap;
 }
 
 .post-date {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .post-type {
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -144,15 +151,15 @@ header .subtitle {
 }
 
 .post-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-primary);
     font-weight: 500;
 }
 
 .post-excerpt {
     color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-top: 8px;
+    font-size: 0.85rem;
+    margin-top: 6px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

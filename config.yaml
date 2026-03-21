@@ -8,4 +8,4 @@ title_rules:
   
   - match_type: "contains"
     ignore_case: true
-    keywords: ["deepseek", "kimi","Moonshot", "qwen", "minimax", "llma", "grok", "antropic", "gemini", "glm", "openai", "chatgpt", "claude", "openclaw", "opencode", "agentic", "ai agent", "Prompt Engine", "Multi-Agent", "Large Language Model", "Mistral", "prompt injection"]
+    keywords: ["deepseek", "kimi","Moonshot", "qwen", "minimax", "llma", "grok", "antropic", "gemini", "glm", "openai", "chatgpt", "claude", "openclaw", "opencode", "agentic", "ai agent", "Prompt Engine", "Multi-Agent", "Large Language Model", "Mistral", "prompt inject"]

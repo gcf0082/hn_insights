@@ -1,6 +1,6 @@
 const REPO_OWNER = 'gcf0082';
 const REPO_NAME = 'hn_insights';
-const BRANCH = 'main';
+const BRANCH = 'master';
 const INSIGHTS_PATH = 'insights';
 
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${INSIGHTS_PATH}`;

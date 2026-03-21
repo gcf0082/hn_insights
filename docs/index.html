@@ -18,12 +18,12 @@
         
         <main>
             <div id="list-view">
-                <div class="filter-bar">
-                    <button class="filter-btn active" data-type="all">全部</button>
-                    <button class="filter-btn" data-type="hn">HN</button>
-                    <button class="filter-btn" data-type="article">Article</button>
-                </div>
                 <div id="post-list" class="loading">加载中...</div>
+                <div id="pagination" class="hidden">
+                    <button id="prev-btn" class="page-btn">上一页</button>
+                    <span id="page-info"></span>
+                    <button id="next-btn" class="page-btn">下一页</button>
+                </div>
             </div>
             
             <div id="detail-view" class="hidden">

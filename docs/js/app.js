@@ -2,13 +2,15 @@ const REPO_OWNER = 'gcf0082';
 const REPO_NAME = 'hn_insights';
 const BRANCH = 'master';
 const INSIGHTS_PATH = 'insights';
+const PAGE_SIZE = 20;
 
 const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${INSIGHTS_PATH}`;
 const RAW_BASE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${INSIGHTS_PATH}`;
 
 let allPosts = [];
-let currentFilter = 'all';
 let visitedPosts = JSON.parse(localStorage.getItem('visitedPosts') || '[]');
+let currentPage = 1;
+let totalPages = 1;
 
 async function fetchPosts() {
     try {
@@ -21,7 +23,9 @@ async function fetchPosts() {
             .map(f => parseFileName(f.name, f.sha))
             .sort((a, b) => b.timestamp - a.timestamp);
         
+        totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
         renderList();
+        renderPagination();
     } catch (err) {
         document.getElementById('post-list').innerHTML = 
             `<div class="error">加载失败: ${err.message}</div>`;
@@ -65,16 +69,16 @@ function parseFileName(filename, sha) {
 
 function renderList() {
     const container = document.getElementById('post-list');
-    const filteredPosts = currentFilter === 'all' 
-        ? allPosts 
-        : allPosts.filter(p => p.type === currentFilter);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const end = start + PAGE_SIZE;
+    const pagePosts = allPosts.slice(start, end);
     
-    if (filteredPosts.length === 0) {
+    if (pagePosts.length === 0) {
         container.innerHTML = '<div class="loading">暂无内容</div>';
         return;
     }
     
-    container.innerHTML = filteredPosts.map(post => `
+    container.innerHTML = pagePosts.map(post => `
         <div class="post-item type-${post.type} ${visitedPosts.includes(post.filename) ? 'visited' : ''}" data-filename="${post.filename}">
             <div class="post-header">
                 <span class="post-date">${post.date}</span>
@@ -87,6 +91,18 @@ function renderList() {
     container.querySelectorAll('.post-item').forEach(item => {
         item.addEventListener('click', () => showDetail(item.dataset.filename));
     });
+}
+
+function renderPagination() {
+    const pagination = document.getElementById('pagination');
+    const pageInfo = document.getElementById('page-info');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    pagination.classList.remove('hidden');
+    pageInfo.textContent = `${currentPage} / ${totalPages}`;
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
 }
 
 function escapeHtml(text) {
@@ -134,18 +150,28 @@ async function showDetail(filename) {
 function showList() {
     document.getElementById('list-view').classList.remove('hidden');
     document.getElementById('detail-view').classList.add('hidden');
+    renderList();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     fetchPosts();
     
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.dataset.type;
+    document.getElementById('prev-btn').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
             renderList();
-        });
+            renderPagination();
+            window.scrollTo(0, 0);
+        }
+    });
+    
+    document.getElementById('next-btn').addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderList();
+            renderPagination();
+            window.scrollTo(0, 0);
+        }
     });
     
     document.getElementById('back-btn').addEventListener('click', showList);

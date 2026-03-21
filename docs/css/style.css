@@ -1,0 +1,338 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-card: #0f3460;
+    --text-primary: #eaeaea;
+    --text-secondary: #a0a0a0;
+    --accent-hn: #ff6b35;
+    --accent-article: #4ecdc4;
+    --border-color: #2a2a4a;
+    --hover-bg: #1f4287;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+#app {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+header .subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.filter-btn:hover {
+    background-color: var(--hover-bg);
+}
+
+.filter-btn.active {
+    background-color: var(--accent-hn);
+    color: white;
+}
+
+.filter-btn[data-type="hn"].active {
+    background-color: var(--accent-hn);
+}
+
+.filter-btn[data-type="article"].active {
+    background-color: var(--accent-article);
+}
+
+#post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.post-item {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.post-item:hover {
+    background-color: var(--hover-bg);
+    transform: translateX(4px);
+}
+
+.post-item.type-hn {
+    border-left-color: var(--accent-hn);
+}
+
+.post-item.type-article {
+    border-left-color: var(--accent-article);
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.post-date {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.post-type {
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.post-type.hn {
+    background-color: var(--accent-hn);
+    color: white;
+}
+
+.post-type.article {
+    background-color: var(--accent-article);
+    color: var(--bg-primary);
+}
+
+.post-title {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.post-excerpt {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.error {
+    color: #ff6b6b;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#detail-view {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: all 0.2s ease;
+}
+
+#back-btn:hover {
+    background-color: var(--hover-bg);
+}
+
+#post-content {
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 30px;
+    line-height: 1.8;
+}
+
+#post-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+#post-content h2 {
+    font-size: 1.4rem;
+    margin: 25px 0 15px;
+    color: var(--text-primary);
+}
+
+#post-content h3 {
+    font-size: 1.2rem;
+    margin: 20px 0 12px;
+    color: var(--text-primary);
+}
+
+#post-content p {
+    margin-bottom: 15px;
+    color: var(--text-primary);
+}
+
+#post-content ul, #post-content ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+#post-content li {
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+#post-content code {
+    background-color: var(--bg-primary);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+#post-content pre {
+    background-color: var(--bg-primary);
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
+#post-content pre code {
+    padding: 0;
+    background: none;
+}
+
+#post-content blockquote {
+    border-left: 4px solid var(--accent-article);
+    padding-left: 20px;
+    margin: 15px 0;
+    color: var(--text-secondary);
+}
+
+#post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+#post-content th, #post-content td {
+    border: 1px solid var(--border-color);
+    padding: 10px 12px;
+    text-align: left;
+}
+
+#post-content th {
+    background-color: var(--bg-card);
+}
+
+#post-content a {
+    color: var(--accent-article);
+    text-decoration: none;
+}
+
+#post-content a:hover {
+    text-decoration: underline;
+}
+
+#post-content hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 20px 0;
+}
+
+#post-content strong {
+    color: var(--text-primary);
+}
+
+footer {
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .filter-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .post-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    #post-content {
+        padding: 20px;
+    }
+}

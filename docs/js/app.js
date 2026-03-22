@@ -176,7 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    });
+    const hash = window.location.hash.slice(1);
+    if (hash && hash.endsWith('.md')) {
+        showDetail(hash);
+    }
+});
 
 window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1);

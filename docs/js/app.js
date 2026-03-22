@@ -89,7 +89,9 @@ function renderList() {
     `).join('');
     
     container.querySelectorAll('.post-item').forEach(item => {
-        item.addEventListener('click', () => showDetail(item.dataset.filename));
+        item.addEventListener('click', () => {
+            window.location.hash = item.dataset.filename;
+        });
     });
 }
 
@@ -174,8 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    document.getElementById('back-btn').addEventListener('click', showList);
-});
+    });
 
 window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1);

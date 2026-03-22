@@ -90,7 +90,9 @@ function renderList() {
     
     container.querySelectorAll('.post-item').forEach(item => {
         item.addEventListener('click', () => {
-            window.location.hash = item.dataset.filename;
+            const filename = item.dataset.filename;
+            window.location.hash = encodeURIComponent(filename);
+            showDetail(filename);
         });
     });
 }
@@ -177,16 +179,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     const hash = window.location.hash.slice(1);
-    if (hash && hash.endsWith('.md')) {
-        showDetail(hash);
+    if (hash) {
+        const filename = decodeURIComponent(hash);
+        if (filename.endsWith('.md')) {
+            showDetail(filename);
+        }
     }
 });
 
 window.addEventListener('hashchange', () => {
     const hash = window.location.hash.slice(1);
-    if (hash && hash.endsWith('.md')) {
-        showDetail(hash);
-    } else {
-        showList();
+    if (hash) {
+        const filename = decodeURIComponent(hash);
+        if (filename.endsWith('.md')) {
+            showDetail(filename);
+            return;
+        }
     }
+    showList();
 });

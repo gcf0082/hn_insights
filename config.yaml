@@ -9,7 +9,7 @@ title_rules:
   - match_type: "contains"
     ignore_case: true
     keywords: ["deepseek", "kimi","Moonshot", "qwen", "minimax", "llma", "grok", "antropic", "gemini", "glm", "openai", "chatgpt", "claude", "openclaw", "opencode", 
-    "DeepMind", "agent framework","function calling","Baichuan","Zhipu","StepFun",
+    "DeepMind", "agent framework","function calling","Baichuan","Zhipu","StepFun","agent harness",
     "agentic", "ai agent", "Prompt Engine", "Multi-Agent", "Large Language Model", "Mistral", "prompt inject","Sam Altman", "claw ", "manus"]
 
   - match_type: "contains"

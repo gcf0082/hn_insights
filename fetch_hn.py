@@ -137,10 +137,14 @@ def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
     print(f"  URL: {url}")
     print(f"  Output: insights/{insight_file}")
 
+    prompt = f"帮我总结洞察{url}。要求：报告必须是中文的，报告顶部包含洞察链接和基本信息，洞察结果保存在当前目录的 insights 目录的{insight_file}"
+    if suffix == "hn":
+        prompt = f"分析总结hacknews链接的评论内容：{url}。要求：分析结果必须是中文的，部包含hacknews原始链接和基本信息，要包含支持的观点和反对的观点，以及普遍达成一致的观点，结果保存在当前目录的 insights 目录的{insight_file}"
+
     cmd = [
         "opencode",
         "run",
-        f"帮我总结洞察{url}。要求：报告必须是中文的，报告顶部包含洞察链接和基本信息，洞察结果保存在当前目录的 insights 目录的{insight_file}",
+        prompt,
         "--model",
         "opencode/minimax-m2.5-free",
     ]

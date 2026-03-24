@@ -1,5 +1,6 @@
 min_score: 30
 min_descendants: 15
+max_articles: 20
 
 title_rules:
   - match_type: "word"

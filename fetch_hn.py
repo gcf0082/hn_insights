@@ -3,6 +3,7 @@ import time
 import re
 import os
 import subprocess
+import shutil
 from datetime import datetime, timezone, timedelta
 
 try:
@@ -126,7 +127,7 @@ def insight_exists(story_id, suffix):
 
 
 def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
-    os.makedirs("insights", exist_ok=True)
+    os.makedirs("data", exist_ok=True)
 
     if suffix:
         insight_file = f"{date_prefix}_{story_id}_{suffix}.md"
@@ -135,16 +136,12 @@ def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
 
     print(f"\n  Generating insight for story {story_id}...")
     print(f"  URL: {url}")
-    print(f"  Output: insights/{insight_file}")
-
-    prompt = f"帮我总结洞察{url}。要求：报告必须是中文的，报告顶部包含洞察链接和基本信息，洞察结果保存在当前目录的 insights 目录的{insight_file}"
-    if suffix == "hn":
-        prompt = f"分析总结hacknews链接的评论内容：{url}。要求：分析结果必须是中文的，包含hacknews原始链接和基本信息，要包含支持的观点和反对的观点，以及普遍达成一致的观点，结果保存在当前目录的 insights 目录的{insight_file}"
+    print(f"  Output: data/{insight_file}")
 
     cmd = [
         "opencode",
         "run",
-        prompt,
+        f"帮我总结洞察{url}。要求：报告必须是中文的，报告顶部包含洞察链接和基本信息，洞察结果保存在当前目录的 data 目录的{insight_file}",
         "--model",
         "opencode/minimax-m2.5-free",
     ]
@@ -164,6 +161,13 @@ def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
         print(f"  Error: {type(e).__name__}: {e}")
         return None
 
+    data_path = f"data/{insight_file}"
+    if not os.path.exists(data_path):
+        print(f"  Error: Insight file not found at {data_path}")
+        return None
+
+    os.makedirs("insights", exist_ok=True)
+
     if chinese_title:
         chinese_title = sanitize_filename(chinese_title)
         base_name = (
@@ -172,14 +176,17 @@ def generate_insight(story_id, url, date_prefix, suffix="", chinese_title=None):
             else f"{date_prefix}_{story_id}"
         )
         new_insight_file = f"{base_name}_{chinese_title}.md"
-        old_path = f"insights/{insight_file}"
-        new_path = f"insights/{new_insight_file}"
-        try:
-            os.rename(old_path, new_path)
-            print(f"  Renamed to: {new_insight_file}")
-            insight_file = new_insight_file
-        except Exception as e:
-            print(f"  Warning: Failed to rename file: {type(e).__name__}: {e}")
+    else:
+        new_insight_file = insight_file
+
+    final_path = f"insights/{new_insight_file}"
+    try:
+        shutil.move(data_path, final_path)
+        print(f"  Moved to: {final_path}")
+        insight_file = new_insight_file
+    except Exception as e:
+        print(f"  Warning: Failed to move file: {type(e).__name__}: {e}")
+        return None
 
     return insight_file
 
@@ -229,11 +236,14 @@ def main():
     print("Loading config...")
     config = load_config()
 
+    max_articles = 999999
     if config:
         min_score = config.get("min_score", 0)
         min_descendants = config.get("min_descendants", 0)
+        max_articles = config.get("max_articles", 999999)
         print(f"Min score: {min_score}")
         print(f"Min descendants: {min_descendants}")
+        print(f"Max articles: {max_articles}")
 
         title_rules = config.get("title_rules", [])
         print(f"Title rules: {len(title_rules)} rules")
@@ -340,6 +350,9 @@ def main():
                         continue
 
                 processed_count += 1
+                if processed_count >= max_articles:
+                    print(f"\n  Reached max articles limit ({max_articles})")
+                    break
         except Exception as e:
             error_count += 1
             print(f"\n  Error fetching story {story_id}: {type(e).__name__}")

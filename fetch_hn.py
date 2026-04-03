@@ -116,13 +116,14 @@ def fetch_story_detail(story_id):
 
 
 def insight_exists(story_id, suffix):
-    if not os.path.exists("insights"):
-        return None
-
     pattern = f"_{story_id}_{suffix}"
-    for filename in os.listdir("insights"):
-        if pattern in filename and filename.endswith(".md"):
-            return filename
+
+    for directory in ["insights", "insights_old"]:
+        if not os.path.exists(directory):
+            continue
+        for filename in os.listdir(directory):
+            if pattern in filename and filename.endswith(".md"):
+                return filename
     return None
 
 
@@ -230,6 +231,43 @@ def sanitize_filename(filename):
     if len(filename) > 100:
         filename = filename[:100]
     return filename
+
+
+def cleanup_insights(keep_count=100):
+    insights_dir = "insights"
+    old_dir = "insights_old"
+
+    if not os.path.exists(insights_dir):
+        return 0
+
+    files = [f for f in os.listdir(insights_dir) if f.endswith(".md")]
+
+    if len(files) <= keep_count:
+        print(f"\nNo cleanup needed: {len(files)} files <= {keep_count} keep count")
+        return 0
+
+    file_times = [(f, os.path.getmtime(os.path.join(insights_dir, f))) for f in files]
+    file_times.sort(key=lambda x: x[1], reverse=True)
+
+    files_to_keep = [f for f, _ in file_times[:keep_count]]
+    files_to_move = [f for f, _ in file_times[keep_count:]]
+
+    os.makedirs(old_dir, exist_ok=True)
+
+    moved_count = 0
+    for filename in files_to_move:
+        old_path = os.path.join(insights_dir, filename)
+        new_path = os.path.join(old_dir, filename)
+        try:
+            os.rename(old_path, new_path)
+            moved_count += 1
+        except Exception as e:
+            print(f"  Warning: Failed to move {filename}: {e}")
+
+    print(f"\nCleanup complete:")
+    print(f"  Kept: {len(files_to_keep)} files in {insights_dir}")
+    print(f"  Moved: {moved_count} files to {old_dir}")
+    return moved_count
 
 
 def main():
@@ -357,6 +395,8 @@ def main():
             error_count += 1
             print(f"\n  Error fetching story {story_id}: {type(e).__name__}")
             continue
+
+    cleanup_insights(keep_count=100)
 
     print(f"\n\nDone!")
     print(f"  Processed: {processed_count}")

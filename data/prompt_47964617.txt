@@ -1,0 +1,37 @@
+请为以下 Hacker News 讨论生成一份中文洞察报告。
+
+## 故事信息
+- 标题: Shai-Hulud Themed Malware Found in the PyTorch Lightning AI Training Library
+- 来源: https://semgrep.dev/blog/2026/malicious-dependency-in-pytorch-lightning-used-for-ai-training/
+- HN链接: https://news.ycombinator.com/item?id=47964617
+- 得分: 176 points
+- 评论数: 47 comments
+
+## 故事概述
+PyPI包"lightning"（一个广泛使用的深度学习框架）在2026年4月30日发布的2.6.2和2.6.3版本中遭到供应链攻击。恶意代码包含在隐藏的_runtime目录中，当模块被导入时会自动执行。该攻击窃取凭证、认证令牌、环境变量和云服务密钥，同时试图毒化GitHub仓库。攻击者使用了《沙丘》主题的命名约定。
+
+## 关键要点
+1. 受影响版本: lightning 2.6.2 和 2.6.3
+2. 恶意代码通过pip install lightning即可激活
+3. 攻击使用四个平行渠道进行数据泄露：
+   - HTTPS POST到C2服务器
+   - GitHub提交搜索dead-drop
+   - 攻击者控制的公开GitHub仓库
+   - 直接推送到受害者自己的仓库
+4. 窃取的凭证类型：GitHub token、AWS凭证、Azure密钥、GCP密钥
+5. 恶意代码通过Claude Code和VS Code的hook实现持久化
+6. 这是"Shai-Hulud"攻击活动的后续行动
+
+## HN热门评论要点
+- 社区建议降级到2.6.1版本直到2.6.4发布
+- PyTorch Lightning与PyTorch没有官方关联
+- Nixpkgs使用GitHub源码，不受此影响
+- 攻击者通过直接发布到PyPI而非提交到GitHub仓库
+- 讨论了依赖管理的安全性问题
+- 建议使用pip 26.1的新功能排除特定日期后的版本
+
+请生成一份结构化的中文洞察报告，包含：
+1. 报告顶部的链接和基本信息
+2. 主要发现和分析
+3. 社区反应和最佳建议
+4. 安全建议和缓解措施
